@@ -1,10 +1,7 @@
 package br.dev.grilo.taskmanager.user.infra.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,15 +31,16 @@ public class User implements UserDetails {
     private boolean active;
     @Column(name = "blocked")
     private boolean blocked;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private List<Company> companies;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private List<Address> adresses;
+    @Column(name = "created_at")
+    private Long createdAt;
+    @Column(name = "updated_at")
+    private Long updatedAt;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private List<Phone> phones;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private List<Address> addresses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

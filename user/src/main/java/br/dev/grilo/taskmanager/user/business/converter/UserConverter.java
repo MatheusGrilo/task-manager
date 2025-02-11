@@ -8,6 +8,7 @@ import br.dev.grilo.taskmanager.user.infra.entity.Phone;
 import br.dev.grilo.taskmanager.user.infra.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -45,6 +46,10 @@ public class UserConverter {
     }
 
     public List<Address> toListAddress(List<AddressDTO> addressDTOList) {
+        if(addressDTOList == null) {
+            return Collections.emptyList();
+        }
+
         return addressDTOList.stream().map(this::toAddress).toList();
     }
 
@@ -61,6 +66,10 @@ public class UserConverter {
     }
 
     public List<Phone> toListPhone(List<PhoneDTO> phoneDTOList) {
+        if(phoneDTOList == null) {
+            return Collections.emptyList();
+        }
+
         return phoneDTOList.stream().map(this::toPhone).toList();
     }
 
@@ -97,6 +106,10 @@ public class UserConverter {
     }
 
     public List<AddressDTO> toListAddressDTO(List<Address> addressList) {
+        if(addressList == null) {
+            return Collections.emptyList();
+        }
+
         return addressList.stream().map(this::toAddressDTO).toList();
     }
 
@@ -113,6 +126,9 @@ public class UserConverter {
     }
 
     public List<PhoneDTO> toListPhoneDTO(List<Phone> phoneList) {
+        if(phoneList == null) {
+            return Collections.emptyList();
+        }
         return phoneList.stream().map(this::toPhoneDTO).toList();
     }
 

@@ -13,7 +13,6 @@ import br.dev.grilo.taskmanager.user.infra.repository.AddressRepository;
 import br.dev.grilo.taskmanager.user.infra.repository.PhoneRepository;
 import br.dev.grilo.taskmanager.user.infra.repository.UserRepository;
 import br.dev.grilo.taskmanager.user.infra.security.JwtUtil;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -4,7 +4,6 @@ import br.dev.grilo.taskmanager.user.business.UserService;
 import br.dev.grilo.taskmanager.user.business.dto.AddressDTO;
 import br.dev.grilo.taskmanager.user.business.dto.PhoneDTO;
 import br.dev.grilo.taskmanager.user.business.dto.UserDTO;
-import br.dev.grilo.taskmanager.user.infra.entity.User;
 import br.dev.grilo.taskmanager.user.infra.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

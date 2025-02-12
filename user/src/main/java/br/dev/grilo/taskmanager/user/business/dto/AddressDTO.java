@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AddressDTO {
+
+    private Long id;
     private String zipCode;
     private String address;
     private String number;

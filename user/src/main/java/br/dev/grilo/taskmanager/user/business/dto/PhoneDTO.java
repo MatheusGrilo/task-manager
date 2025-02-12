@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class PhoneDTO {
 
+    private Long id;
     private Long createdAt;
     private Long updatedAt;
     private String countryCode;

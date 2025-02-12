@@ -1,6 +1,8 @@
 package br.dev.grilo.taskmanager.user.controller;
 
 import br.dev.grilo.taskmanager.user.business.UserService;
+import br.dev.grilo.taskmanager.user.business.dto.AddressDTO;
+import br.dev.grilo.taskmanager.user.business.dto.PhoneDTO;
 import br.dev.grilo.taskmanager.user.business.dto.UserDTO;
 import br.dev.grilo.taskmanager.user.infra.entity.User;
 import br.dev.grilo.taskmanager.user.infra.security.JwtUtil;
@@ -37,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<User> findUserByUsername(@RequestParam("username") String username) {
+    public ResponseEntity<UserDTO> findUserByUsername(@RequestParam("username") String username) {
         return ResponseEntity.ok(userService.findUserByUsername(username));
     }
 
@@ -50,6 +52,16 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserDTO dto) {
         return ResponseEntity.ok(userService.updateUser(token, dto));
+    }
+
+    @PatchMapping("/address")
+    public ResponseEntity<AddressDTO> updateAddress(@RequestBody AddressDTO dto, @RequestParam("id") Long id) {
+        return ResponseEntity.ok(userService.updateAddress(id, dto));
+    }
+
+    @PatchMapping("/phone")
+    public ResponseEntity<PhoneDTO> updatePhone(@RequestBody PhoneDTO dto, @RequestParam("id") Long id) {
+        return ResponseEntity.ok(userService.updatePhone(id, dto));
     }
 
 }

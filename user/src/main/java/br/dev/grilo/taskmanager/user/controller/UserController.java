@@ -11,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -46,6 +45,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         userService.deleteUserByUsername(username);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserDTO dto) {
+        return ResponseEntity.ok(userService.updateUser(token, dto));
     }
 
 }

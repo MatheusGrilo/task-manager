@@ -22,8 +22,6 @@ public class UserConverter {
                 username(userDTO.getUsername()).
                 email(userDTO.getEmail()).
                 password(userDTO.getPassword()).
-                active(userDTO.isActive()).
-                blocked(userDTO.isBlocked()).
                 createdAt(userDTO.getCreatedAt()).
                 updatedAt(userDTO.getUpdatedAt()).
                 addresses(toListAddress(userDTO.getAddresses())).
@@ -82,8 +80,6 @@ public class UserConverter {
                 username(user.getUsername()).
                 email(user.getEmail()).
                 password(user.getPassword()).
-                active(user.isActive()).
-                blocked(user.isBlocked()).
                 createdAt(user.getCreatedAt()).
                 updatedAt(user.getUpdatedAt()).
                 addresses(toListAddressDTO(user.getAddresses())).
@@ -130,6 +126,20 @@ public class UserConverter {
             return Collections.emptyList();
         }
         return phoneList.stream().map(this::toPhoneDTO).toList();
+    }
+
+    public User updateUser(UserDTO userDTO, User user) {
+        return User.builder()
+                .id(user.getId())
+                .name(userDTO.getName() != null ? userDTO.getName() : user.getName())
+                .username(userDTO.getUsername() != null ? userDTO.getUsername() : user.getUsername())
+                .email(userDTO.getEmail() != null ? userDTO.getEmail() : user.getEmail())
+                .password(userDTO.getPassword() != null ? userDTO.getPassword() : user.getPassword())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(System.currentTimeMillis())
+                .addresses(user.getAddresses())
+                .phones(user.getPhones())
+                .build();
     }
 
 

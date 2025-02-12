@@ -5,11 +5,11 @@ import br.dev.grilo.taskmanager.user.business.dto.UserDTO;
 import br.dev.grilo.taskmanager.user.infra.entity.User;
 import br.dev.grilo.taskmanager.user.infra.exceptions.ConflictExceptions;
 import br.dev.grilo.taskmanager.user.infra.repository.UserRepository;
+import br.dev.grilo.taskmanager.user.infra.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -18,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UserDTO saveUser(UserDTO userDTO) {
 
@@ -29,7 +30,9 @@ public class UserService {
             throw new ConflictExceptions("Email already used: " + userDTO.getEmail());
         }
 
+        userDTO.setName(userDTO.getName() != null ? userDTO.getName() : userDTO.getUsername());
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userDTO.setCreatedAt(System.currentTimeMillis());
 
         User user = userConverter.toUser(userDTO);
         user = userRepository.save(user);
@@ -52,5 +55,22 @@ public class UserService {
         }
 
         userRepository.deleteByUsername(username);
+    }
+
+    public UserDTO updateUser(String token, UserDTO dto) {
+                String username = jwtUtil.extractUsername(token.substring(7));
+
+                // Check password before update and encrypt, or just return null
+                dto.setPassword(dto.getPassword() != null ? passwordEncoder.encode(dto.getPassword()) : null);
+
+                User userEntity = userRepository.findByUsername(username).
+                        orElseThrow(() ->
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Username not found: " + username)
+                        );
+
+                User user = userConverter.updateUser(dto, userEntity);
+
+                return userConverter.toUserDTO(userRepository.save(user));
     }
 }

@@ -27,10 +27,6 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "active")
-    private boolean active;
-    @Column(name = "blocked")
-    private boolean blocked;
     @Column(name = "created_at")
     private Long createdAt;
     @Column(name = "updated_at")

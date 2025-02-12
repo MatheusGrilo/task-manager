@@ -1,6 +1,7 @@
 services:
-  database:
+  postgresql:
     image: "postgres:17-alpine"
+    restart: always
     environment:
       - POSTGRES_HOST=localhost
       - POSTGRES_PORT=5432
@@ -9,3 +10,11 @@ services:
       - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
+  mongodb:
+    image: "mongo"
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+        - "27017:27017"

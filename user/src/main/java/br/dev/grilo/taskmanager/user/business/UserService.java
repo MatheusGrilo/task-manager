@@ -6,8 +6,11 @@ import br.dev.grilo.taskmanager.user.infra.entity.User;
 import br.dev.grilo.taskmanager.user.infra.exceptions.ConflictExceptions;
 import br.dev.grilo.taskmanager.user.infra.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,4 +36,21 @@ public class UserService {
         return userConverter.toUserDTO(user);
     }
 
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new
+                        ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found: " + username)
+                );
+    }
+
+    public void deleteUserByUsername(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found: " + username
+            );
+        }
+
+        userRepository.deleteByUsername(username);
+    }
 }

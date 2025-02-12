@@ -29,10 +29,16 @@ public class Address {
     private String neighborhood;
     @Column(name = "extra_information", length = 128)
     private String extraInformation;
-    @Column(name = "country", length = 9)
+    @Column(name = "country")
     private String country;
-    @Column(name = "country_province", length = 2)
+    @Column(name = "country_province")
     private String countryProvince;
     @Column(name = "city", length = 128)
-    private Integer city;
+    private String city;
+    @Column(name = "created_at")
+    private Long createdAt;
+    @Column(name = "updated_at")
+    private Long updatedAt;
+    @Column(name= "user_id")
+    private Long userId;
 }

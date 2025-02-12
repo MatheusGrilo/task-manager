@@ -1,9 +1,16 @@
 package br.dev.grilo.taskmanager.user.business;
 
 import br.dev.grilo.taskmanager.user.business.converter.UserConverter;
+import br.dev.grilo.taskmanager.user.business.dto.AddressDTO;
+import br.dev.grilo.taskmanager.user.business.dto.PhoneDTO;
 import br.dev.grilo.taskmanager.user.business.dto.UserDTO;
+import br.dev.grilo.taskmanager.user.infra.entity.Address;
+import br.dev.grilo.taskmanager.user.infra.entity.Phone;
 import br.dev.grilo.taskmanager.user.infra.entity.User;
 import br.dev.grilo.taskmanager.user.infra.exceptions.ConflictExceptions;
+import br.dev.grilo.taskmanager.user.infra.exceptions.ResourceNotFoundException;
+import br.dev.grilo.taskmanager.user.infra.repository.AddressRepository;
+import br.dev.grilo.taskmanager.user.infra.repository.PhoneRepository;
 import br.dev.grilo.taskmanager.user.infra.repository.UserRepository;
 import br.dev.grilo.taskmanager.user.infra.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +25,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
+    private final AddressRepository addressRepository;
+    private final PhoneRepository phoneRepository;
     private final JwtUtil jwtUtil;
 
     public UserDTO saveUser(UserDTO userDTO) {
@@ -39,12 +48,20 @@ public class UserService {
         return userConverter.toUserDTO(user);
     }
 
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new
-                        ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found: " + username)
-                );
+    public UserDTO findUserByUsername(String username) {
+        try {
+            return userConverter.toUserDTO(
+                    userRepository.findByUsername(username)
+                            .orElseThrow(() -> new
+                                    ResponseStatusException(
+                                    HttpStatus.NOT_FOUND, "User not found: " + username)
+                            )
+            );
+        } catch (ResourceNotFoundException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found: " + username
+            );
+        }
     }
 
     public void deleteUserByUsername(String username) {
@@ -58,19 +75,74 @@ public class UserService {
     }
 
     public UserDTO updateUser(String token, UserDTO dto) {
-                String username = jwtUtil.extractUsername(token.substring(7));
+        String username = jwtUtil.extractUsername(token.substring(7));
 
-                // Check password before update and encrypt, or just return null
-                dto.setPassword(dto.getPassword() != null ? passwordEncoder.encode(dto.getPassword()) : null);
+        // Check password before update and encrypt, or just return null
+        dto.setPassword(dto.getPassword() != null ? passwordEncoder.encode(dto.getPassword()) : null);
 
-                User userEntity = userRepository.findByUsername(username).
-                        orElseThrow(() ->
-                                new ResponseStatusException(
-                                        HttpStatus.NOT_FOUND, "Username not found: " + username)
-                        );
+        User userEntity = userRepository.findByUsername(username).
+                orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "Username not found: " + username)
+                );
 
-                User user = userConverter.updateUser(dto, userEntity);
+        User user = userConverter.updateUser(dto, userEntity);
 
-                return userConverter.toUserDTO(userRepository.save(user));
+        return userConverter.toUserDTO(userRepository.save(user));
     }
+
+    public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO) {
+
+        Address entity = addressRepository.findById(addressId).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Address not found: " + addressId)
+        );
+
+        Address address = userConverter.updateAddress(addressDTO, entity);
+
+        addressRepository.save(address);
+
+        return userConverter.toAddressDTO(addressRepository.save(address));
+    }
+
+    public PhoneDTO updatePhone(Long phoneId, PhoneDTO phoneDTO) {
+
+        Phone entity = phoneRepository.findById(phoneId).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Phone not found: " + phoneId)
+        );
+
+        Phone phone = userConverter.updatePhone(phoneDTO, entity);
+
+        phoneRepository.save(phone);
+
+        return userConverter.toPhoneDTO(phoneRepository.save(phone));
+    }
+
+    public AddressDTO saveAddress(String token, AddressDTO addressDTO) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Username not found: " + username)
+        );
+
+        Address address = userConverter.toAddressEntity(addressDTO, user.getId());
+        Address addressEntity = addressRepository.save(address);
+
+        return userConverter.toAddressDTO(addressEntity);
+    }
+
+    public PhoneDTO savePhone(String token, PhoneDTO phoneDTO) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Username not found: " + username)
+        );
+
+        Phone phone = userConverter.toPhoneEntity(phoneDTO, user.getId());
+        Phone phoneEntity = phoneRepository.save(phone);
+
+        return userConverter.toPhoneDTO(phoneEntity);
+    }
+
 }

@@ -44,7 +44,7 @@ public class UserConverter {
     }
 
     public List<Address> toListAddress(List<AddressDTO> addressDTOList) {
-        if(addressDTOList == null) {
+        if (addressDTOList == null) {
             return Collections.emptyList();
         }
 
@@ -64,7 +64,7 @@ public class UserConverter {
     }
 
     public List<Phone> toListPhone(List<PhoneDTO> phoneDTOList) {
-        if(phoneDTOList == null) {
+        if (phoneDTOList == null) {
             return Collections.emptyList();
         }
 
@@ -89,6 +89,8 @@ public class UserConverter {
 
     public AddressDTO toAddressDTO(Address address) {
         return AddressDTO.builder().
+                id(address.getId()).
+                userId(address.getUserId()).
                 zipCode(address.getZipCode()).
                 address(address.getAddress()).
                 number(address.getNumber()).
@@ -98,11 +100,13 @@ public class UserConverter {
                 country(address.getCountry()).
                 countryProvince(address.getCountryProvince()).
                 city(address.getCity()).
+                createdAt(address.getCreatedAt()).
+                updatedAt(address.getUpdatedAt()).
                 build();
     }
 
     public List<AddressDTO> toListAddressDTO(List<Address> addressList) {
-        if(addressList == null) {
+        if (addressList == null) {
             return Collections.emptyList();
         }
 
@@ -111,6 +115,8 @@ public class UserConverter {
 
     public PhoneDTO toPhoneDTO(Phone phone) {
         return PhoneDTO.builder().
+                id(phone.getId()).
+                userId(phone.getUserId()).
                 createdAt(phone.getCreatedAt()).
                 updatedAt(phone.getUpdatedAt()).
                 countryCode(phone.getCountryCode()).
@@ -122,26 +128,87 @@ public class UserConverter {
     }
 
     public List<PhoneDTO> toListPhoneDTO(List<Phone> phoneList) {
-        if(phoneList == null) {
+        if (phoneList == null) {
             return Collections.emptyList();
         }
         return phoneList.stream().map(this::toPhoneDTO).toList();
     }
 
-    public User updateUser(UserDTO userDTO, User user) {
+    public User updateUser(UserDTO dto, User entity) {
         return User.builder()
-                .id(user.getId())
-                .name(userDTO.getName() != null ? userDTO.getName() : user.getName())
-                .username(userDTO.getUsername() != null ? userDTO.getUsername() : user.getUsername())
-                .email(userDTO.getEmail() != null ? userDTO.getEmail() : user.getEmail())
-                .password(userDTO.getPassword() != null ? userDTO.getPassword() : user.getPassword())
-                .createdAt(user.getCreatedAt())
+                .id(entity.getId())
+                .name(dto.getName() != null ? dto.getName() : entity.getName())
+                .username(dto.getUsername() != null ? dto.getUsername() : entity.getUsername())
+                .email(dto.getEmail() != null ? dto.getEmail() : entity.getEmail())
+                .password(dto.getPassword() != null ? dto.getPassword() : entity.getPassword())
+                .createdAt(entity.getCreatedAt())
                 .updatedAt(System.currentTimeMillis())
-                .addresses(user.getAddresses())
-                .phones(user.getPhones())
+                .addresses(entity.getAddresses())
+                .phones(entity.getPhones())
                 .build();
     }
 
+    public Address toAddressEntity(AddressDTO dto, Long userId) {
+        return Address.builder()
+                .userId(userId)
+                .zipCode(dto.getZipCode())
+                .address(dto.getAddress())
+                .number(dto.getNumber())
+                .complement(dto.getComplement())
+                .neighborhood(dto.getNeighborhood())
+                .extraInformation(dto.getExtraInformation())
+                .country(dto.getCountry())
+                .countryProvince(dto.getCountryProvince())
+                .city(dto.getCity())
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(null)
+                .build();
+    }
+
+    public Address updateAddress(AddressDTO dto, Address entity) {
+        return Address.builder()
+                .id(entity.getId())
+                .userId(entity.getUserId())
+                .zipCode(dto.getZipCode() != null ? dto.getZipCode() : entity.getZipCode())
+                .address(dto.getAddress() != null ? dto.getAddress() : entity.getAddress())
+                .number(dto.getNumber() != null ? dto.getNumber() : entity.getNumber())
+                .complement(dto.getComplement() != null ? dto.getComplement() : entity.getComplement())
+                .neighborhood(dto.getNeighborhood() != null ? dto.getNeighborhood() : entity.getNeighborhood())
+                .extraInformation(dto.getExtraInformation() != null ? dto.getExtraInformation() : entity.getExtraInformation())
+                .country(dto.getCountry() != null ? dto.getCountry() : entity.getCountry())
+                .countryProvince(dto.getCountryProvince() != null ? dto.getCountryProvince() : entity.getCountryProvince())
+                .city(dto.getCity() != null ? dto.getCity() : entity.getCity())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(System.currentTimeMillis())
+                .build();
+    }
+
+    public Phone toPhoneEntity(PhoneDTO dto, Long userId) {
+        return Phone.builder()
+                .userId(userId)
+                .countryCode(dto.getCountryCode())
+                .phoneNumber(dto.getPhoneNumber())
+                .label(dto.getLabel())
+                .isPublic(dto.isPublic())
+                .active(dto.isActive())
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(null)
+                .build();
+    }
+
+    public Phone updatePhone(PhoneDTO dto, Phone entity) {
+        return Phone.builder()
+                .userId(entity.getUserId())
+                .id(entity.getId())
+                .countryCode(dto.getCountryCode() != null ? dto.getCountryCode() : entity.getCountryCode())
+                .phoneNumber(dto.getPhoneNumber() != null ? dto.getPhoneNumber() : entity.getPhoneNumber())
+                .label(dto.getLabel() != null ? dto.getLabel() : entity.getLabel())
+                .isPublic(dto.isPublic() || entity.isPublic())
+                .active(dto.isActive() || entity.isActive())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(System.currentTimeMillis())
+                .build();
+    }
 
 
 }

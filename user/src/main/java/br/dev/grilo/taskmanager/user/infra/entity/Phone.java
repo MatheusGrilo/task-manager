@@ -29,4 +29,6 @@ public class Phone {
     private boolean isPublic;
     @Column(name = "active", columnDefinition = "boolean default true")
     private boolean active;
+    @Column(name= "user_id")
+    private Long userId;
 }

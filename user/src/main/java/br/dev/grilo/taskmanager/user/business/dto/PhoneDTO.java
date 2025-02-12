@@ -10,6 +10,7 @@ import lombok.*;
 public class PhoneDTO {
 
     private Long id;
+    private Long userId;
     private Long createdAt;
     private Long updatedAt;
     private String countryCode;

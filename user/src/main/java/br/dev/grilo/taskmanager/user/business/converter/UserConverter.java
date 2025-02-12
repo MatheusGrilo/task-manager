@@ -90,6 +90,7 @@ public class UserConverter {
     public AddressDTO toAddressDTO(Address address) {
         return AddressDTO.builder().
                 id(address.getId()).
+                userId(address.getUserId()).
                 zipCode(address.getZipCode()).
                 address(address.getAddress()).
                 number(address.getNumber()).
@@ -99,6 +100,8 @@ public class UserConverter {
                 country(address.getCountry()).
                 countryProvince(address.getCountryProvince()).
                 city(address.getCity()).
+                createdAt(address.getCreatedAt()).
+                updatedAt(address.getUpdatedAt()).
                 build();
     }
 
@@ -113,6 +116,7 @@ public class UserConverter {
     public PhoneDTO toPhoneDTO(Phone phone) {
         return PhoneDTO.builder().
                 id(phone.getId()).
+                userId(phone.getUserId()).
                 createdAt(phone.getCreatedAt()).
                 updatedAt(phone.getUpdatedAt()).
                 countryCode(phone.getCountryCode()).
@@ -144,9 +148,27 @@ public class UserConverter {
                 .build();
     }
 
+    public Address toAddressEntity(AddressDTO dto, Long userId) {
+        return Address.builder()
+                .userId(userId)
+                .zipCode(dto.getZipCode())
+                .address(dto.getAddress())
+                .number(dto.getNumber())
+                .complement(dto.getComplement())
+                .neighborhood(dto.getNeighborhood())
+                .extraInformation(dto.getExtraInformation())
+                .country(dto.getCountry())
+                .countryProvince(dto.getCountryProvince())
+                .city(dto.getCity())
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(null)
+                .build();
+    }
+
     public Address updateAddress(AddressDTO dto, Address entity) {
         return Address.builder()
                 .id(entity.getId())
+                .userId(entity.getUserId())
                 .zipCode(dto.getZipCode() != null ? dto.getZipCode() : entity.getZipCode())
                 .address(dto.getAddress() != null ? dto.getAddress() : entity.getAddress())
                 .number(dto.getNumber() != null ? dto.getNumber() : entity.getNumber())
@@ -156,11 +178,27 @@ public class UserConverter {
                 .country(dto.getCountry() != null ? dto.getCountry() : entity.getCountry())
                 .countryProvince(dto.getCountryProvince() != null ? dto.getCountryProvince() : entity.getCountryProvince())
                 .city(dto.getCity() != null ? dto.getCity() : entity.getCity())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(System.currentTimeMillis())
+                .build();
+    }
+
+    public Phone toPhoneEntity(PhoneDTO dto, Long userId) {
+        return Phone.builder()
+                .userId(userId)
+                .countryCode(dto.getCountryCode())
+                .phoneNumber(dto.getPhoneNumber())
+                .label(dto.getLabel())
+                .isPublic(dto.isPublic())
+                .active(dto.isActive())
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(null)
                 .build();
     }
 
     public Phone updatePhone(PhoneDTO dto, Phone entity) {
         return Phone.builder()
+                .userId(entity.getUserId())
                 .id(entity.getId())
                 .countryCode(dto.getCountryCode() != null ? dto.getCountryCode() : entity.getCountryCode())
                 .phoneNumber(dto.getPhoneNumber() != null ? dto.getPhoneNumber() : entity.getPhoneNumber())

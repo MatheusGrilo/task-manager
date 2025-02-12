@@ -10,6 +10,7 @@ import lombok.*;
 public class AddressDTO {
 
     private Long id;
+    private Long userId;
     private String zipCode;
     private String address;
     private String number;
@@ -18,6 +19,8 @@ public class AddressDTO {
     private String extraInformation;
     private String country;
     private String countryProvince;
-    private Integer city;
+    private String city;
+    private Long createdAt;
+    private Long updatedAt;
 
 }

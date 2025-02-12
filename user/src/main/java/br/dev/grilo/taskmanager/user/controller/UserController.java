@@ -27,6 +27,17 @@ public class UserController {
         return ResponseEntity.ok(userService.saveUser(userDTO));
     }
 
+    @GetMapping
+    public ResponseEntity<UserDTO> findUserByUsername(@RequestParam("username") String username) {
+        return ResponseEntity.ok(userService.findUserByUsername(username));
+    }
+
+
+    @PatchMapping
+    public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserDTO dto) {
+        return ResponseEntity.ok(userService.updateUser(token, dto));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         Authentication authentication = authenticationManager.authenticate(
@@ -37,25 +48,25 @@ public class UserController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @GetMapping
-    public ResponseEntity<UserDTO> findUserByUsername(@RequestParam("username") String username) {
-        return ResponseEntity.ok(userService.findUserByUsername(username));
-    }
-
     @DeleteMapping("{username}")
     public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         userService.deleteUserByUsername(username);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping
-    public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserDTO dto) {
-        return ResponseEntity.ok(userService.updateUser(token, dto));
+    @PostMapping("/address")
+    public ResponseEntity<AddressDTO> saveAddress(@RequestBody AddressDTO dto, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(userService.saveAddress(token, dto));
     }
 
     @PatchMapping("/address")
     public ResponseEntity<AddressDTO> updateAddress(@RequestBody AddressDTO dto, @RequestParam("id") Long id) {
         return ResponseEntity.ok(userService.updateAddress(id, dto));
+    }
+
+    @PostMapping("/phone")
+    public ResponseEntity<PhoneDTO> savePhone(@RequestBody PhoneDTO dto, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(userService.savePhone(token, dto));
     }
 
     @PatchMapping("/phone")

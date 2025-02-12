@@ -118,4 +118,31 @@ public class UserService {
 
         return userConverter.toPhoneDTO(phoneRepository.save(phone));
     }
+
+    public AddressDTO saveAddress(String token, AddressDTO addressDTO) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Username not found: " + username)
+        );
+
+        Address address = userConverter.toAddressEntity(addressDTO, user.getId());
+        Address addressEntity = addressRepository.save(address);
+
+        return userConverter.toAddressDTO(addressEntity);
+    }
+
+    public PhoneDTO savePhone(String token, PhoneDTO phoneDTO) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Username not found: " + username)
+        );
+
+        Phone phone = userConverter.toPhoneEntity(phoneDTO, user.getId());
+        Phone phoneEntity = phoneRepository.save(phone);
+
+        return userConverter.toPhoneDTO(phoneEntity);
+    }
+
 }

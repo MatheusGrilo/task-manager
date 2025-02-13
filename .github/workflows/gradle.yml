@@ -16,10 +16,8 @@ jobs:
     strategy:
       matrix:
         service-path:
-        - 'user'
-        #- 'task-manager'
-        #- 'email-push'
-        #- 'bff'
+          - 'user'
+          - 'tasks'
 
     steps:
       - name: Checkout repository

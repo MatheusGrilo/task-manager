@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +30,17 @@ public class TasksService {
         TasksEntity tasksEntity = tasksConverter.toTasksEntity(tasksDTO);
 
         return tasksConverter.toTasksDTO(tasksRepository.save(tasksEntity));
+    }
+
+    public List<TasksDTO> listTasksByEventDate(
+            LocalDateTime start,
+            LocalDateTime end
+    ) {
+
+        List<TasksEntity> tasksEntityList = tasksRepository.findByEventDateBetween(start, end);
+
+        return tasksConverter.toTasksDTOList(
+                tasksRepository.findByEventDateBetween(start, end)
+        );
     }
 }

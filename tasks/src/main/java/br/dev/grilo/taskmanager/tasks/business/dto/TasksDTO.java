@@ -1,6 +1,7 @@
 package br.dev.grilo.taskmanager.tasks.business.dto;
 
 import br.dev.grilo.taskmanager.tasks.infra.enums.NotificationStatusEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class TasksDTO {
     private String taskDescription;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime eventDate;
     private String userEmail;
     private NotificationStatusEnum notificationStatus;

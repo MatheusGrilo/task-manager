@@ -15,9 +15,10 @@ public class JwtUtil {
     // https://jwtsecret.com/generate
     private final String secretKey = "super-secret-secure-key-use-link-above-for-256-characters";
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String email) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("email", email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
@@ -34,6 +35,10 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return extractClaims(token).getSubject();
+    }
+
+    public String extractEmail(String token) {
+        return extractClaims(token).get("email", String.class);
     }
 
     public boolean isTokenExpired(String token) {

@@ -44,7 +44,7 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())
         );
 
-        String token = jwtUtil.generateToken(authentication.getName());
+        String token = jwtUtil.generateToken(authentication.getName(), userDTO.getEmail());
         return ResponseEntity.ok(Map.of("token", token));
     }
 

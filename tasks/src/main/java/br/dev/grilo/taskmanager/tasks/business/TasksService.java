@@ -36,11 +36,16 @@ public class TasksService {
             LocalDateTime start,
             LocalDateTime end
     ) {
-
-        List<TasksEntity> tasksEntityList = tasksRepository.findByEventDateBetween(start, end);
-
         return tasksConverter.toTasksDTOList(
                 tasksRepository.findByEventDateBetween(start, end)
         );
+    }
+
+    public List<TasksDTO> listTasksByUserEmail(String token) {
+
+        String email = jwtUtil.extractEmail(token.substring(7));
+        List<TasksEntity> tasksEntities = tasksRepository.findByUserEmail(email);
+
+        return tasksConverter.toTasksDTOList(tasksEntities);
     }
 }

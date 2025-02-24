@@ -31,4 +31,9 @@ public class TasksController {
     ) {
         return ResponseEntity.ok(tasksService.listTasksByEventDate(start, end));
     }
+
+    @GetMapping
+    public ResponseEntity<List<TasksDTO>> listTasksByUserEmail(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(tasksService.listTasksByUserEmail(token));
+    }
 }

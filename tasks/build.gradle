@@ -56,6 +56,10 @@ dependencyManagement {
     }
 }
 
+springBoot {
+    mainClass = 'br.dev.grilo.taskmanager.tasks.TasksApplication'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }

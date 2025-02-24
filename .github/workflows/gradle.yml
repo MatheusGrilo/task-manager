@@ -13,12 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        service-path:
-          - 'user'
-          - 'tasks'
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -32,18 +26,33 @@ jobs:
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
+          path: ~/user/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Grant execute permission for gradlew in each service
-        run: chmod +x ${{ matrix.service-path }}/gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x user/gradlew
 
       - name: Build with Gradle
-        run: ./${{ matrix.service-path }}/gradlew build
-        working-directory: ./${{ matrix.service-path }}
+        run: ./user/gradlew build
 
       - name: Run tests
-        run: ./${{ matrix.service-path }}/gradlew test
-        working-directory: ./${{ matrix.service-path }}
+        run: ./user/gradlew test
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/tasks/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x tasks/gradlew
+
+      - name: Build with Gradle
+        run: ./tasks/gradlew build
+
+      - name: Run tests
+        run: ./tasks/gradlew test

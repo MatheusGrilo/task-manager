@@ -4,6 +4,7 @@ import br.dev.grilo.taskmanager.tasks.business.dto.TasksDTO;
 import br.dev.grilo.taskmanager.tasks.business.mapper.TasksConverter;
 import br.dev.grilo.taskmanager.tasks.infra.entity.TasksEntity;
 import br.dev.grilo.taskmanager.tasks.infra.enums.NotificationStatusEnum;
+import br.dev.grilo.taskmanager.tasks.infra.exceptions.ResourceNotFoundException;
 import br.dev.grilo.taskmanager.tasks.infra.repository.TasksRepository;
 import br.dev.grilo.taskmanager.tasks.infra.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +48,13 @@ public class TasksService {
         List<TasksEntity> tasksEntities = tasksRepository.findByUserEmail(email);
 
         return tasksConverter.toTasksDTOList(tasksEntities);
+    }
+
+    public void deleteTaskById(String taskId) {
+        try {
+            tasksRepository.deleteById(taskId);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Error trying to delete task by id: " + taskId, e.getCause());
+        }
     }
 }

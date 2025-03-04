@@ -2,7 +2,6 @@ package br.dev.grilo.taskmanager.tasks.controller;
 
 import br.dev.grilo.taskmanager.tasks.business.TasksService;
 import br.dev.grilo.taskmanager.tasks.business.dto.TasksDTO;
-import feign.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +34,11 @@ public class TasksController {
     @GetMapping
     public ResponseEntity<List<TasksDTO>> listTasksByUserEmail(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(tasksService.listTasksByUserEmail(token));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteTaskById(String taskId) {
+        tasksService.deleteTaskById(taskId);
+        return ResponseEntity.ok().build();
     }
 }

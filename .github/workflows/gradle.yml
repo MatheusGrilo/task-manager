@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, tasks]
 
     services:
       postgres:
@@ -50,33 +53,19 @@ jobs:
           echo "MONGO_INITDB_ROOT_USERNAME=root" >> $GITHUB_ENV
           echo "MONGO_INITDB_ROOT_PASSWORD=password" >> $GITHUB_ENV
 
-      - name: Cache Gradle packages for user
+      - name: Cache Gradle packages for ${{ matrix.service }}
         uses: actions/cache@v3
         with:
-          path: ~/user/.gradle/caches
-          key: ${{ runner.os }}-gradle-user-${{ hashFiles('user/**/*.gradle*', 'user/**/gradle-wrapper.properties') }}
+          path: ~/${{ matrix.service }}/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ matrix.service }}-${{ hashFiles('${{ matrix.service }}/**/*.gradle*', '${{ matrix.service }}/**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-user-
+            ${{ runner.os }}-gradle-${{ matrix.service }}-
 
-      - name: Build and Test User Service
+      - name: Build and Test ${{ matrix.service }} Service
         run: |
-          chmod +x user/gradlew
-          ./user/gradlew build
-          ./user/gradlew test
-
-      - name: Cache Gradle packages for tasks
-        uses: actions/cache@v3
-        with:
-          path: ~/tasks/.gradle/caches
-          key: ${{ runner.os }}-gradle-tasks-${{ hashFiles('tasks/**/*.gradle*', 'tasks/**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-tasks-
-
-      - name: Build and Test Tasks Service
-        run: |
-          chmod +x tasks/gradlew
-          ./tasks/gradlew build
-          ./tasks/gradlew test
+          chmod +x ${{ matrix.service }}/gradlew
+          ./${{ matrix.service }}/gradlew build
+          ./${{ matrix.service }}/gradlew test
 
       - name: Print MongoDB logs if failure occurs
         if: failure()

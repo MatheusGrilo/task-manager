@@ -23,7 +23,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         options: >-
-          --health-cmd "pg_isready -U postgres -d db_user"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -38,9 +38,9 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: password
         options: >-
           --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 10
 
     steps:
       - name: Checkout repository
@@ -52,36 +52,38 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Gradle packages
+      - name: Cache Gradle packages for user
         uses: actions/cache@v3
         with:
           path: ~/user/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-user-${{ hashFiles('user/**/*.gradle*', 'user/**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-user-
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x user/gradlew
+      - name: Build and Test User Service
+        run: |
+          chmod +x user/gradlew
+          ./user/gradlew build
+          ./user/gradlew test
 
-      - name: Build with Gradle
-        run: ./user/gradlew build
-
-      - name: Run tests
-        run: ./user/gradlew test
-
-      - name: Cache Gradle packages
+      - name: Cache Gradle packages for tasks
         uses: actions/cache@v3
         with:
           path: ~/tasks/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-tasks-${{ hashFiles('tasks/**/*.gradle*', 'tasks/**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-tasks-
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x tasks/gradlew
+      - name: Build and Test Tasks Service
+        run: |
+          chmod +x tasks/gradlew
+          ./tasks/gradlew build
+          ./tasks/gradlew test
 
-      - name: Build with Gradle
-        run: ./tasks/gradlew build
+      - name: Print MongoDB logs if failure occurs
+        if: failure()
+        run: docker logs $(docker ps -q --filter ancestor=mongo)
 
-      - name: Run tests
-        run: ./tasks/gradlew test
+      - name: Print PostgreSQL logs if failure occurs
+        if: failure()
+        run: docker logs $(docker ps -q --filter ancestor=postgres)

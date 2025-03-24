@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, tasks]
 
     services:
       postgres:
@@ -23,21 +26,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         options: >-
-          --health-cmd "pg_isready -U postgres -d db_user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
-        env:
-          MONGO_INITDB_DATABASE: db_tasks
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: password
-        options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -52,36 +41,36 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Gradle packages
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: '8.0'
+          mongodb-port: 27017
+
+      - name: Set environment variables
+        run: |
+          echo "MONGO_INITDB_DATABASE=db_tasks" >> $GITHUB_ENV
+          echo "MONGO_INITDB_ROOT_USERNAME=root" >> $GITHUB_ENV
+          echo "MONGO_INITDB_ROOT_PASSWORD=password" >> $GITHUB_ENV
+
+      - name: Cache Gradle packages for ${{ matrix.service }}
         uses: actions/cache@v3
         with:
-          path: ~/user/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          path: ~/${{ matrix.service }}/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ matrix.service }}-${{ hashFiles('${{ matrix.service }}/**/*.gradle*', '${{ matrix.service }}/**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-${{ matrix.service }}-
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x user/gradlew
+      - name: Build and Test ${{ matrix.service }} Service
+        run: |
+          chmod +x ${{ matrix.service }}/gradlew
+          ./${{ matrix.service }}/gradlew build
+          ./${{ matrix.service }}/gradlew test
 
-      - name: Build with Gradle
-        run: ./user/gradlew build
+      - name: Print MongoDB logs if failure occurs
+        if: failure()
+        run: docker logs $(docker ps -q --filter ancestor=mongo)
 
-      - name: Run tests
-        run: ./user/gradlew test
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: ~/tasks/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x tasks/gradlew
-
-      - name: Build with Gradle
-        run: ./tasks/gradlew build
-
-      - name: Run tests
-        run: ./tasks/gradlew test
+      - name: Print PostgreSQL logs if failure occurs
+        if: failure()
+        run: docker logs $(docker ps -q --filter ancestor=postgres)

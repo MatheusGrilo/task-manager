@@ -42,6 +42,10 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+springBoot {
+	mainClass = 'br.dev.grilo.taskmanager.user.UserApplication'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

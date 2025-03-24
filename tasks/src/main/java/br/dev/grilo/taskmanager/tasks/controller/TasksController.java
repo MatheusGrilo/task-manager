@@ -2,6 +2,7 @@ package br.dev.grilo.taskmanager.tasks.controller;
 
 import br.dev.grilo.taskmanager.tasks.business.TasksService;
 import br.dev.grilo.taskmanager.tasks.business.dto.TasksDTO;
+import br.dev.grilo.taskmanager.tasks.infra.enums.NotificationStatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,11 @@ public class TasksController {
     public ResponseEntity<Void> deleteTaskById(String taskId) {
         tasksService.deleteTaskById(taskId);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<TasksDTO> changeStatus(@RequestParam("status") NotificationStatusEnum status,
+                                                 @RequestParam("taskId") String taskId) {
+        return ResponseEntity.ok(tasksService.changeStatus(status, taskId));
     }
 }

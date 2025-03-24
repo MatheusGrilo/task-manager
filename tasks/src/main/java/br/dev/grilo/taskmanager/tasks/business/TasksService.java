@@ -2,6 +2,7 @@ package br.dev.grilo.taskmanager.tasks.business;
 
 import br.dev.grilo.taskmanager.tasks.business.dto.TasksDTO;
 import br.dev.grilo.taskmanager.tasks.business.mapper.TasksConverter;
+import br.dev.grilo.taskmanager.tasks.business.mapper.TasksUpdateConverter;
 import br.dev.grilo.taskmanager.tasks.infra.entity.TasksEntity;
 import br.dev.grilo.taskmanager.tasks.infra.enums.NotificationStatusEnum;
 import br.dev.grilo.taskmanager.tasks.infra.exceptions.ResourceNotFoundException;
@@ -20,6 +21,7 @@ public class TasksService {
     private final TasksRepository tasksRepository;
     private final TasksConverter tasksConverter;
     private final JwtUtil jwtUtil;
+    private final TasksUpdateConverter tasksUpdateConverter;
 
     public TasksDTO createTask(String token, TasksDTO tasksDTO) {
         String email = jwtUtil.extractEmail(token.substring(7));
@@ -55,6 +57,18 @@ public class TasksService {
             tasksRepository.deleteById(taskId);
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Error trying to delete task by id: " + taskId, e.getCause());
+        }
+    }
+
+    public TasksDTO changeStatus(NotificationStatusEnum status, String id) {
+        try {
+            TasksEntity tasksEntity = tasksRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + id));
+
+            tasksEntity.setNotificationStatus(status);
+            return tasksConverter.toTasksDTO(tasksRepository.save(tasksEntity));
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Error trying to change task status: " + id, e.getCause());
         }
     }
 }

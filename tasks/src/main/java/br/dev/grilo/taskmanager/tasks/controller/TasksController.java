@@ -48,4 +48,10 @@ public class TasksController {
                                                  @RequestParam("taskId") String taskId) {
         return ResponseEntity.ok(tasksService.changeStatus(status, taskId));
     }
+
+    @PutMapping
+    public ResponseEntity<TasksDTO> updateTasks(@RequestBody TasksDTO tasksDTO,
+                                                @RequestParam("taskId") String taskId) {
+        return ResponseEntity.ok(tasksService.updateTasks(tasksDTO, taskId));
+    }
 }

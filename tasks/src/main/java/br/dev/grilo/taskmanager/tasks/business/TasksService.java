@@ -71,4 +71,16 @@ public class TasksService {
             throw new ResourceNotFoundException("Error trying to change task status: " + id, e.getCause());
         }
     }
+
+    public TasksDTO updateTasks(TasksDTO tasksDTO, String id) {
+        try {
+            TasksEntity tasksEntity = tasksRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + id));
+
+            tasksUpdateConverter.updateTasks(tasksDTO, tasksEntity);
+            return tasksConverter.toTasksDTO(tasksRepository.save(tasksEntity));
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Error trying to update task: " + id, e.getCause());
+        }
+    }
 }

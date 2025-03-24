@@ -3,7 +3,6 @@ package br.dev.grilo.taskmanager.notification.business;
 import br.dev.grilo.taskmanager.notification.business.dto.TasksDTO;
 import br.dev.grilo.taskmanager.notification.infra.exceptions.EmailException;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

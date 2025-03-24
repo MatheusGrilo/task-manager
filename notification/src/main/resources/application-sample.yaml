@@ -26,4 +26,4 @@ spring:
 
 email:
   sender: your@gmail.com
-  senderName: "Sender Name Here"
+  senderName: Sender Name Here

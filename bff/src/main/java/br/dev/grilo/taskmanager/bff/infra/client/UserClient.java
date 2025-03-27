@@ -6,7 +6,7 @@ import br.dev.grilo.taskmanager.bff.business.dto.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "user", url = "${user.url}")
+@FeignClient(name = "user", url = "${user.url}/user")
 public interface UserClient {
 
     @GetMapping

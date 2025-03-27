@@ -1,50 +1,54 @@
 package br.dev.grilo.taskmanager.bff.infra.client;
 
-import br.dev.grilo.taskmanager.bff.business.dto.AddressDTO;
-import br.dev.grilo.taskmanager.bff.business.dto.PhoneDTO;
-import br.dev.grilo.taskmanager.bff.business.dto.UserDTO;
+import br.dev.grilo.taskmanager.bff.business.dto.in.AddressDTORequest;
+import br.dev.grilo.taskmanager.bff.business.dto.in.LoginDTORequest;
+import br.dev.grilo.taskmanager.bff.business.dto.in.PhoneDTORequest;
+import br.dev.grilo.taskmanager.bff.business.dto.in.UserDTORequest;
+import br.dev.grilo.taskmanager.bff.business.dto.out.AddressDTOResponse;
+import br.dev.grilo.taskmanager.bff.business.dto.out.PhoneDTOResponse;
+import br.dev.grilo.taskmanager.bff.business.dto.out.UserDTOResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "user", url = "${user.url}/user")
+@FeignClient(name = "user", url = "${user.url}")
 public interface UserClient {
 
     @GetMapping
-    UserDTO findUserByUsername(
+    UserDTOResponse findUserByUsername(
             @RequestParam("username") String username,
             @RequestHeader("Authorization") String token
     );
 
     @PostMapping
-    UserDTO saveUser(@RequestBody UserDTO userDTO);
+    UserDTOResponse saveUser(@RequestBody UserDTORequest userDTORequest);
 
     @PostMapping("/login")
-    String login(@RequestBody UserDTO userDTO);
+    String login(@RequestBody LoginDTORequest loginDTORequest);
 
     @DeleteMapping("{username}")
     void deleteUserByUsername(@PathVariable String username,
                               @RequestHeader("Authorization") String token);
 
     @PatchMapping
-    UserDTO updateUser(@RequestBody UserDTO dto,
-                       @RequestHeader("Authorization") String token);
+    UserDTOResponse updateUser(@RequestBody UserDTORequest dto,
+                               @RequestHeader("Authorization") String token);
 
     @PostMapping("/address")
-    AddressDTO saveAddress(@RequestBody AddressDTO dto,
-                           @RequestHeader("Authorization") String token);
+    AddressDTOResponse saveAddress(@RequestBody AddressDTORequest dto,
+                                   @RequestHeader("Authorization") String token);
 
 
     @PatchMapping("/address")
-    AddressDTO updateAddress(@RequestBody AddressDTO dto,
-                             @RequestParam("id") Long id,
-                             @RequestHeader("Authorization") String token);
+    AddressDTOResponse updateAddress(@RequestBody AddressDTORequest dto,
+                                     @RequestParam("id") Long id,
+                                     @RequestHeader("Authorization") String token);
 
     @PostMapping("/phone")
-    PhoneDTO savePhone(@RequestBody PhoneDTO dto,
-                       @RequestHeader("Authorization") String token);
+    PhoneDTOResponse savePhone(@RequestBody PhoneDTORequest dto,
+                               @RequestHeader("Authorization") String token);
 
     @PatchMapping("/phone")
-    PhoneDTO updatePhone(@RequestBody PhoneDTO dto,
-                         @RequestParam("id") Long id,
-                         @RequestHeader("Authorization") String token);
+    PhoneDTOResponse updatePhone(@RequestBody PhoneDTORequest dto,
+                                 @RequestParam("id") Long id,
+                                 @RequestHeader("Authorization") String token);
 }

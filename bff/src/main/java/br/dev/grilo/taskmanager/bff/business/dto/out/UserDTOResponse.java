@@ -1,4 +1,4 @@
-package br.dev.grilo.taskmanager.bff.business.dto;
+package br.dev.grilo.taskmanager.bff.business.dto.out;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
+public class UserDTOResponse {
 
     private String name;
     private String username;
@@ -18,7 +18,7 @@ public class UserDTO {
     private Long createdAt;
     private Long updatedAt;
 
-    private List<AddressDTO> addresses;
-    private List<PhoneDTO> phones;
+    private List<AddressDTOResponse> addresses;
+    private List<PhoneDTOResponse> phones;
 
 }

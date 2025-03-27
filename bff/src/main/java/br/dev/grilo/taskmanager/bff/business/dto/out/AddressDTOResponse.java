@@ -1,4 +1,4 @@
-package br.dev.grilo.taskmanager.bff.business.dto;
+package br.dev.grilo.taskmanager.bff.business.dto.out;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddressDTO {
+public class AddressDTOResponse {
 
     private Long id;
     private Long userId;

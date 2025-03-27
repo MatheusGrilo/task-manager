@@ -1,4 +1,4 @@
-package br.dev.grilo.taskmanager.bff.business.dto;
+package br.dev.grilo.taskmanager.bff.business.dto.in;
 
 import lombok.*;
 
@@ -7,9 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PhoneDTO {
+public class PhoneDTORequest {
 
-    private Long id;
     private Long userId;
     private Long createdAt;
     private Long updatedAt;
